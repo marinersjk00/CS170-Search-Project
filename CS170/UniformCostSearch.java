@@ -1,28 +1,6 @@
 import java.io.*;
 import java.util.*;
 
-/*static int puzzleDim = 3;
-static class State{
-  int[][] puzzle;
-  int emptyI;
-  int emptyJ;
-
-  State(int[][] p){
-	this.puzzle = p;
-	a:
-	for(int i = 0; i < puzzleDim; i++){
-		for(int j = 0; j < puzzleDim; j++){
-			if(puzzle[i][j] == 0){
-				this.emptyI = i;
-				this.emptyJ = j;
-				break a;
-			}
-		}
-	}
-  }
-
-}
-*/
 
 class Main
 {
@@ -67,19 +45,20 @@ static class State{
 	}
 
 	public static void main(String[] args) {
-		int[][] puzzle = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
+//		int[][] puzzle = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
+		int[][] puzzle = new int[puzzleDim][puzzleDim];
 	        int[][] solved = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
 		State goal = new State(solved);
 		Set<State> seen = new HashSet<State>();	
 		Scanner in = new Scanner(System.in);
 		Queue<State> cost = new LinkedList<>();
 		
-/*		System.out.print("Please enter the puzzle start from L to R, Top to Bottom. Enter '0' to represent the empty space");
+		System.out.print("Please enter the puzzle start from L to R, Top to Bottom. Enter '0' to represent the empty space\n\n");
 	for(int i = 0; i < puzzleDim; i++){
 		for(int j = 0; j < puzzleDim; j++){
 			puzzle[i][j] = in.nextInt();
 		}
-*/
+}
 		State root = new State(puzzle);
 		State curr = root;
 		boolean reachedGoal = false;
