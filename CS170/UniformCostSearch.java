@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.*;
+import java.time.*;
+
 
 
 class Main
@@ -115,8 +117,6 @@ static class StateCompare implements Comparator<State>{
 				//System.out.print("Q Check");
 				next.add(nextState);
 				
-			}else {
-				System.out.print("hash check");
 			}
 		}
 		
@@ -135,8 +135,6 @@ static class StateCompare implements Comparator<State>{
 				//System.out.print("Q Check");
 
 				next.add(nextState);
-			}else {
-				System.out.print("hash check");
 			}
 		}
 		
@@ -156,8 +154,6 @@ static class StateCompare implements Comparator<State>{
 
 				next.add(nextState);
 				
-			}else {
-				System.out.print("hash check");
 			}
 		}
 		
@@ -177,8 +173,6 @@ static class StateCompare implements Comparator<State>{
 
 				next.add(nextState);
 				
-			}else {
-				System.out.print("hash check");
 			}
 		}
 		
@@ -190,6 +184,9 @@ static class StateCompare implements Comparator<State>{
 		ArrayList<ArrayList<Integer>>  solved = new ArrayList<ArrayList<Integer>>() ;
 		HashMap<ArrayList<ArrayList<Integer>>, Integer> seen = new HashMap<>();	
 		PriorityQueue<State> next = new PriorityQueue<State>(new StateCompare());
+		
+		
+		
 		boolean isSolvable = false;
 		
 		int goalNum = 1;
@@ -242,6 +239,11 @@ static class StateCompare implements Comparator<State>{
 		
 		
 		next.add(start);
+Instant insta = Instant.now();
+		
+		long startTime = insta.toEpochMilli();
+		System.out.print("\nstart time = " + startTime + "\n");
+
 		while(!next.isEmpty() && !isSolvable) {
 			State curr = next.remove();
 			System.out.print("Depth: " + curr.depth + "\n");
@@ -253,13 +255,20 @@ static class StateCompare implements Comparator<State>{
 				System.out.println();
 			}
 			isSolvable = isGoal(curr.puzzle, solved);
-			if(isSolvable) finished = curr;
+			if(isSolvable) {
+				finished = curr;
+				
+			}
 			
 			search(curr, seen, next);	
 		}
 		
-		if(isSolvable) System.out.print("\nSolved!\nDepth of Solution: " + finished.depth);
-		else System.out.print("\nNo solution for given input.");
+		if(isSolvable) { 
+			insta = Instant.now();
+			long endTime = insta.toEpochMilli();
+			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed: " + (double)(endTime - startTime)/1000 + " sec");
+		
+		}else System.out.print("\nNo solution for given input.");
 		
 		
 	
