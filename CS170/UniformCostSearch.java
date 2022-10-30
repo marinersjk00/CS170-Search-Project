@@ -114,52 +114,85 @@ static class StateCompare implements Comparator<State>{
 	static void search(State curr, HashMap<ArrayList<ArrayList<Integer>>, Integer> seen, Queue<State> next) {
 		
 		if(curr.emptyI < puzzleDim - 1) {
-			State temp = curr;
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) {
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}
 
-			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI + 1).get(temp.emptyJ), temp.emptyI, temp.emptyJ, temp.emptyI + 1, temp.emptyJ), temp.depth + 1, temp.emptyI + 1, temp.emptyJ);
+			State nextState = new State(swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI + 1).get(curr.emptyJ), curr.emptyI, curr.emptyJ, curr.emptyI + 1, curr.emptyJ), curr.depth + 1, curr.emptyI + 1, curr.emptyJ);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
 				next.add(nextState);
 				
+			}else {
+				System.out.print("hash check");
 			}
 		}
 		
 		if(curr.emptyI > 0) {
-			State temp = curr;
-			
-			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI - 1).get(temp.emptyJ), temp.emptyI, temp.emptyJ, temp.emptyI - 1, temp.emptyJ), temp.depth + 1, temp.emptyI - 1, temp.emptyJ);
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) {
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}			
+			State nextState = new State(swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI - 1).get(curr.emptyJ), curr.emptyI, curr.emptyJ, curr.emptyI - 1, curr.emptyJ), curr.depth + 1, curr.emptyI - 1, curr.emptyJ);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
 
 				next.add(nextState);
+			}else {
+				System.out.print("hash check");
 			}
 		}
 		
 		if(curr.emptyJ < puzzleDim - 1) {
-			State temp = curr;
-
-			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI).get(temp.emptyJ + 1), temp.emptyI, temp.emptyJ, temp.emptyI, temp.emptyJ + 1), temp.depth + 1, temp.emptyI, temp.emptyJ + 1);
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) {
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}
+			State nextState = new State(swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI).get(curr.emptyJ + 1), curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ + 1), curr.depth + 1, curr.emptyI, curr.emptyJ + 1);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
 
 				next.add(nextState);
 				
+			}else {
+				System.out.print("hash check");
 			}
 		}
 		
 		if(curr.emptyJ > 0) {
-			State temp = curr;
-
-			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI).get(temp.emptyJ - 1), temp.emptyI, temp.emptyJ, temp.emptyI, temp.emptyJ - 1), temp.depth + 1, temp.emptyI, temp.emptyJ - 1);
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) {
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}
+			State nextState = new State(swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI).get(curr.emptyJ - 1), curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ - 1), curr.depth + 1, curr.emptyI, curr.emptyJ - 1);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
 
 				next.add(nextState);
 				
+			}else {
+				System.out.print("hash check");
 			}
 		}
 		
@@ -253,5 +286,4 @@ static class StateCompare implements Comparator<State>{
 
 	}
 }
-
 
