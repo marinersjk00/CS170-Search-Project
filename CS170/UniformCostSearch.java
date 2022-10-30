@@ -7,7 +7,7 @@ import java.time.*;
 class Main
 {
 static Scanner in = new Scanner(System.in);
-static int puzzleDim = 4; //This is the only value we have to change to adjust for a different size of puzzle
+static int puzzleDim = 3; //We can change this value to change the size of the puzzle. If we want to change puzzle size from 3x3 then we must also alter the countManhattan function.
 static class State{
   ArrayList<ArrayList<Integer>> puzzle;
   int emptyI;
@@ -413,7 +413,7 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 			for(int j = 0; j < puzzleDim; j++) {
 				if(curr.get(i).get(j) == 0 || curr.get(i).get(j) == goal.get(i).get(j)) continue;
 				else {
-					switch(curr.get(i).get(j)) {
+					switch(curr.get(i).get(j)) { //hardcoded switch to calculate manhattan distance for given value. Must be modified for different size puzzles.
 					
 					case 1:
 						manhattan += (i + 0 + j + 0);
@@ -628,7 +628,7 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 		System.out.print("Enter 1 to enter a custom puzzle or 2 to use a default puzzle\n");
 		input = in.nextInt();
 		
-		if(input == 2) {
+		if(input == 2) { //Some hardcoded initial states to choose from
 			
 			System.out.print("You selected the default input option.\n Enter a difficulty level from 1-5 with 1 being 'Trivial' and 5 being 'Oh Boy' difficulty \n");
 			input = in.nextInt();
@@ -704,15 +704,7 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 			next.add(start);
 		}
 		
-		
-		
-		
-		
-		
-		
-		
-	
-	
+
 		if(desiredSearch == 1) {
 			UniformCostSearch(solved, seen, next);
 		}else if(desiredSearch == 2) {
@@ -721,20 +713,8 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 			ManhattanSearch(solved, seen, next);
 		}
 		
+		System.out.println("Thank you for utilizing Jordan Kuschner's 8-puzzle solver!");
 		
-		
-		
-		 //otherwise inform the user it is not solvable, say how deep it searched and for how long
-		
-		
-	
-
-
-	
-
-		
-
-
 
 	}
 }
