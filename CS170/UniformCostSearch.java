@@ -305,6 +305,47 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		return numMisplaced;
 	}
 	
+	public static int countManhattan(ArrayList<ArrayList<Integer>> goal, ArrayList<ArrayList<Integer>> curr) {
+		int manhattan = 0;
+		for(int i = 0; i < puzzleDim; i++) {
+			for(int j = 0; j < puzzleDim; j++) {
+				if(curr.get(i).get(j) == 0 || curr.get(i).get(j) == goal.get(i).get(j)) continue;
+				else {
+					switch(curr.get(i).get(j)) {
+					
+					case 1:
+						manhattan += (i + 0 + j + 0);
+						break;
+					case 2:
+						manhattan += (i + 0 + j + 1);
+						break;
+					case 3:
+						manhattan += (i + 0 + j + 2);
+						break;
+					case 4:
+						manhattan += (i + 1 + j + 0);
+						break;
+					case 5:
+						manhattan += (i + 1 + j + 1);
+						break;
+					case 6:
+						manhattan += (i + 1 + j + 2);
+						break;
+					case 7:
+						manhattan += (i + 2 + j + 0);
+						break;
+					case 8:
+						manhattan += (i + 2 + j + 1);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		
+		return manhattan;
+	}
 	public static void UniformCostSearch(ArrayList<ArrayList<Integer>> goalState, HashMap<ArrayList<ArrayList<Integer>>, Integer> seenStates, PriorityQueue<State> next) {
 
 		boolean isSolvable = false;
