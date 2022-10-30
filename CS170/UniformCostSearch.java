@@ -45,9 +45,9 @@ static class State{
 static class StateCompare implements Comparator<State>{
 	public int compare(State s, State p) {
 		if(s.depth < p.depth) {
-			return 1;
+			return -11;
 		}else if(s.depth > p.depth) {
-			return -1;
+			return 1;
 		}else {
 			return 0;
 		}
@@ -60,8 +60,28 @@ static class StateCompare implements Comparator<State>{
 	static ArrayList<ArrayList<Integer>> swap(ArrayList<ArrayList<Integer>> arr, int a, int b, int ai, int aj, int bi, int bj){
 		
 		
+		System.out.println("Before swap: \n\n");
+		for(int i = 0; i < puzzleDim; i++) {
+			for(int j = 0; j < puzzleDim; j++) {
+				System.out.print(arr.get(i).get(j) + "  ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	
+
 		arr.get(ai).set(aj, b);
 		arr.get(bi).set(bj, a);
+		
+		System.out.println("After swap: \n\n");
+		for(int i = 0; i < puzzleDim; i++) {
+			for(int j = 0; j < puzzleDim; j++) {
+				System.out.print(arr.get(i).get(j) + "  ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
 		
 		
 	
@@ -94,7 +114,9 @@ static class StateCompare implements Comparator<State>{
 	static void search(State curr, HashMap<ArrayList<ArrayList<Integer>>, Integer> seen, Queue<State> next) {
 		
 		if(curr.emptyI < puzzleDim - 1) {
-			State nextState = new State(swap(curr.puzzle, 0, curr.puzzle.get(curr.emptyI + 1).get(curr.emptyJ), curr.emptyI, curr.emptyJ, curr.emptyI + 1, curr.emptyJ), curr.depth + 1, curr.emptyI + 1, curr.emptyJ);
+			State temp = curr;
+
+			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI + 1).get(temp.emptyJ), temp.emptyI, temp.emptyJ, temp.emptyI + 1, temp.emptyJ), temp.depth + 1, temp.emptyI + 1, temp.emptyJ);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
@@ -104,7 +126,9 @@ static class StateCompare implements Comparator<State>{
 		}
 		
 		if(curr.emptyI > 0) {
-			State nextState = new State(swap(curr.puzzle, 0, curr.puzzle.get(curr.emptyI - 1).get(curr.emptyJ), curr.emptyI, curr.emptyJ, curr.emptyI - 1, curr.emptyJ), curr.depth + 1, curr.emptyI - 1, curr.emptyJ);
+			State temp = curr;
+			
+			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI - 1).get(temp.emptyJ), temp.emptyI, temp.emptyJ, temp.emptyI - 1, temp.emptyJ), temp.depth + 1, temp.emptyI - 1, temp.emptyJ);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
@@ -114,7 +138,9 @@ static class StateCompare implements Comparator<State>{
 		}
 		
 		if(curr.emptyJ < puzzleDim - 1) {
-			State nextState = new State(swap(curr.puzzle, 0, curr.puzzle.get(curr.emptyI).get(curr.emptyJ + 1), curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ + 1), curr.depth + 1, curr.emptyI, curr.emptyJ + 1);
+			State temp = curr;
+
+			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI).get(temp.emptyJ + 1), temp.emptyI, temp.emptyJ, temp.emptyI, temp.emptyJ + 1), temp.depth + 1, temp.emptyI, temp.emptyJ + 1);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
@@ -125,7 +151,9 @@ static class StateCompare implements Comparator<State>{
 		}
 		
 		if(curr.emptyJ > 0) {
-			State nextState = new State(swap(curr.puzzle, 0, curr.puzzle.get(curr.emptyI).get(curr.emptyJ - 1), curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ - 1), curr.depth + 1, curr.emptyI, curr.emptyJ - 1);
+			State temp = curr;
+
+			State nextState = new State(swap(temp.puzzle, temp.puzzle.get(temp.emptyI).get(temp.emptyJ), temp.puzzle.get(temp.emptyI).get(temp.emptyJ - 1), temp.emptyI, temp.emptyJ, temp.emptyI, temp.emptyJ - 1), temp.depth + 1, temp.emptyI, temp.emptyJ - 1);
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 				//System.out.print("Q Check");
@@ -194,8 +222,8 @@ static class StateCompare implements Comparator<State>{
 		
 		
 		next.add(start);
-		
-		while(!next.isEmpty()) {
+		int k = 0;
+		while(!next.isEmpty() && k <= 2) {
 			State curr = next.remove();
 			System.out.print("Depth: " + curr.depth + "\n");
 			System.out.print("\nState:\n\n");
@@ -208,7 +236,8 @@ static class StateCompare implements Comparator<State>{
 			
 			if(isGoal(curr.puzzle, solved)) break;
 			
-			search(curr, seen, next);		
+			search(curr, seen, next);	
+			k++;
 		}
 		
 		
