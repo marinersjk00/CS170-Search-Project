@@ -7,10 +7,10 @@ class Main
 static Scanner in = new Scanner(System.in);
 //	System.out.print("Please enter puzzle dimension: \n Ex: '3' for 8-puzzle, '4' for 15-puzzle, '5' for 24-puzzle\n");
 static int puzzleDim = 3;
-static class State{
+/*static class State{
   int[][] puzzle;
   int depth;
-  boolean isRepeat = false;
+  
   
   
   State(int[][] p, int d){
@@ -29,20 +29,11 @@ static class State{
         }
   }
   
-  public boolean checkRepeat(State p) {
-	  
-	  for(int i = 0; i < puzzleDim; i++) {
-		  for(int j = 0; j < puzzleDim; j++) {
-			  if(p.puzzle[i][j] != this.puzzle[i][j]) return false;
-			  
-		  }
-	  }
-	  this.isRepeat = true;
-	  
-	  return true;
-  }
+  
 
-}
+}*/
+
+
 
 
 	
@@ -52,7 +43,7 @@ static class State{
 		arr[bi][bj] = temp;
 	
 		
-		return curr;
+		return arr;
 		
 		
 	}
@@ -70,93 +61,61 @@ static class State{
 	
 
 	public static void main(String[] args) {
-//		int[][] puzzle = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
-		int[][] puzzle = new int[puzzleDim][puzzleDim];
-		int[][] solved = new int[puzzleDim][puzzleDim];
+		ArrayList<ArrayList<Integer>>  puzzle = new ArrayList<ArrayList<Integer>>() ;
+		
+		ArrayList<ArrayList<Integer>>  solved = new ArrayList<ArrayList<Integer>>() ;
 		int goalNum = 1;
 		for(int i = 0; i < puzzleDim; i++){
+			
+			ArrayList<Integer> temp = new ArrayList<>();
+			solved.add(temp);
+			
 			for(int j = 0; j < puzzleDim; j++){
 				if(i == j && j == puzzleDim - 1){
-					solved[i][j] = 0;
+					temp.add(0);
 				}else{
-				solved[i][j] = goalNum;
+				temp.add(goalNum);
 				}
+				
 				goalNum++;
-				System.out.print(solved[i][j] + "  ");
+				System.out.print(solved.get(i).get(j) + "  ");
+				
 				}
+			
+			
 		System.out.println();
+		
 		}
-		State goal = new State(solved);
-		Set<State> seen = new HashSet<State>();	
-		Queue<State> cost = new LinkedList<>();
+		
+		
+		
+		HashMap<ArrayList<ArrayList<Integer>>, Integer> seen = new HashMap<>();	
 		
 		System.out.print("Please enter the puzzle start from L to R, Top to Bottom. Enter '0' to represent the empty space\n\n");
 	for(int i = 0; i < puzzleDim; i++){
+		ArrayList<Integer> temp = new ArrayList<Integer>();
+		puzzle.add(temp);
 		for(int j = 0; j < puzzleDim; j++){
-			puzzle[i][j] = in.nextInt();
+			temp.add(in.nextInt());
 		}
-}
+		
+	}
+	
+	System.out.println("Starting puzzle: ");
+	for(int i = 0; i < puzzleDim; i++){
+		for(int j = 0; j < puzzleDim; j++){
+			System.out.print(puzzle.get(i).get(j) + "  ");
+		}
+		System.out.println();
+	}
 				
 
-State root = new State(puzzle);
-		root.depth = 1;
-		State curr = root;
-		
-		while(!isGoal(curr.puzzle, solved)){
-		seen.add(curr);	
-		System.out.print("Depth: " + curr.depth + "\n");
-	   if(curr.emptyI < puzzleDim - 1){
-			System.out.print("here");
-			State nextState = swap(curr, puzzle[curr.emptyI][curr.emptyJ], puzzle[curr.emptyI + 1][curr.emptyJ], curr.emptyI, curr.emptyJ, curr.emptyI + 1, curr.emptyJ);
-			nextState.depth = curr.depth + 1;
 
-	//		if(!seen.contains(nextState)){
-                        System.out.print("Adding to Q\n");
-
-			cost.add(nextState);
-	//	   }
-		}
-
-		 if(curr.emptyI > 0){
-                        State nextState = swap(curr, puzzle[curr.emptyI][curr.emptyJ], puzzle[curr.emptyI - 1][curr.emptyJ], curr.emptyI, curr.emptyJ, curr.emptyI - 1, curr.emptyJ);
-            			nextState.depth = curr.depth + 1;
-
-                        if(!seen.contains(nextState)){
-                        System.out.print("Adding to Q\n");
-
-                        cost.add(nextState);
-                   }
-                }
-
-		 if(curr.emptyJ < puzzleDim - 1){
-                        State nextState = swap(curr, puzzle[curr.emptyI][curr.emptyJ], puzzle[curr.emptyI][curr.emptyJ + 1], curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ + 1);
-            			nextState.depth = curr.depth + 1;
-
-                        if(!seen.contains(nextState)){
-		                        System.out.print("Adding to Q\n");
-
-                        cost.add(nextState);
-
-                   }
-                }
-
-		 if(curr.emptyJ > 0){
-                        State nextState = swap(curr, puzzle[curr.emptyI][curr.emptyJ], puzzle[curr.emptyI][curr.emptyJ-1], curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ - 1);
-            			nextState.depth = curr.depth + 1;
-
-                        if(!seen.contains(nextState)){
-			System.out.print("Adding to Q\n");
-                        cost.add(nextState);
-                   }
-                }
-		
-		curr = cost.remove();
-	}
 
 
 		for(int i = 0; i < puzzleDim; i++){
 			for(int j = 0; j < puzzleDim; j++){
-				System.out.print(puzzle[i][j] + "  ");
+				System.out.print(puzzle.get(i).get(j) + "  ");
 	}
 				System.out.println();
 
