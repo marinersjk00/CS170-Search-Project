@@ -9,12 +9,14 @@ static Scanner in = new Scanner(System.in);
 static int puzzleDim = 3;
 static class State{
   int[][] puzzle;
-  int emptyI;
-  int emptyJ;
   int depth;
+  boolean isRepeat = false;
   
-  State(int[][] p){
+  
+  State(int[][] p, int d){
         this.puzzle = p;
+        this.depth = d;
+        
         a:
         for(int i = 0; i < puzzleDim; i++){
                 for(int j = 0; j < puzzleDim; j++){
@@ -26,20 +28,29 @@ static class State{
                 }
         }
   }
+  
+  public boolean checkRepeat(State p) {
+	  
+	  for(int i = 0; i < puzzleDim; i++) {
+		  for(int j = 0; j < puzzleDim; j++) {
+			  if(p.puzzle[i][j] != this.puzzle[i][j]) return false;
+			  
+		  }
+	  }
+	  this.isRepeat = true;
+	  
+	  return true;
+  }
 
 }
 
-	static State swap(State curr,  int a, int b, int ai, int aj, int bi, int bj){
+
+	
+	static int[][] swap(int[][] arr, int a, int b, int ai, int aj, int bi, int bj){
 		int temp = a;
-		curr.puzzle[ai][aj] = b;
-		curr.puzzle[bi][bj] = temp;
-		if(a == 0) {
-			curr.emptyI = bi;
-			curr.emptyJ = bj;
-		}else if(b == 0) {
-			curr.emptyI = ai;
-			curr.emptyJ = aj;
-		}
+		arr[ai][aj] = b;
+		arr[bi][bj] = temp;
+	
 		
 		return curr;
 		
