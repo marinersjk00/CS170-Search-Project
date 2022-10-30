@@ -60,27 +60,13 @@ static class StateCompare implements Comparator<State>{
 	static ArrayList<ArrayList<Integer>> swap(ArrayList<ArrayList<Integer>> arr, int a, int b, int ai, int aj, int bi, int bj){
 		
 		
-		System.out.println("Before swap: \n\n");
-		for(int i = 0; i < puzzleDim; i++) {
-			for(int j = 0; j < puzzleDim; j++) {
-				System.out.print(arr.get(i).get(j) + "  ");
-			}
-			System.out.println();
-		}
-		System.out.println();
+	
 	
 
 		arr.get(ai).set(aj, b);
 		arr.get(bi).set(bj, a);
 		
-		System.out.println("After swap: \n\n");
-		for(int i = 0; i < puzzleDim; i++) {
-			for(int j = 0; j < puzzleDim; j++) {
-				System.out.print(arr.get(i).get(j) + "  ");
-			}
-			System.out.println();
-		}
-		System.out.println();
+	
 		
 		
 		
@@ -204,6 +190,7 @@ static class StateCompare implements Comparator<State>{
 		ArrayList<ArrayList<Integer>>  solved = new ArrayList<ArrayList<Integer>>() ;
 		HashMap<ArrayList<ArrayList<Integer>>, Integer> seen = new HashMap<>();	
 		PriorityQueue<State> next = new PriorityQueue<State>(new StateCompare());
+		boolean isSolvable = false;
 		
 		int goalNum = 1;
 		for(int i = 0; i < puzzleDim; i++){
@@ -251,12 +238,11 @@ static class StateCompare implements Comparator<State>{
 	}
 		System.out.println();
 		State start = new State(puzzle, 0);
-		
+		State finished = null;
 		
 		
 		next.add(start);
-		int k = 0;
-		while(!next.isEmpty() && k <= 2) {
+		while(!next.isEmpty() && !isSolvable) {
 			State curr = next.remove();
 			System.out.print("Depth: " + curr.depth + "\n");
 			System.out.print("\nState:\n\n");
@@ -266,13 +252,14 @@ static class StateCompare implements Comparator<State>{
 				}
 				System.out.println();
 			}
-			
-			if(isGoal(curr.puzzle, solved)) break;
+			isSolvable = isGoal(curr.puzzle, solved);
+			if(isSolvable) finished = curr;
 			
 			search(curr, seen, next);	
-			k++;
 		}
 		
+		if(isSolvable) System.out.print("\nSolved!\nDepth of Solution: " + finished.depth);
+		else System.out.print("\nNo solution for given input.");
 		
 		
 	
