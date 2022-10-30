@@ -214,7 +214,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		
 	}
 	
-	static void misplacedSearch(State curr, HashMap<ArrayList<ArrayList<Integer>>, Integer> seen, Queue<State> next, ArrayList<ArrayList<Integer>> goal) {
+	static void misplacedSearch(State curr, HashMap<ArrayList<ArrayList<Integer>>, Integer> seen, Queue<State> next, ArrayList<ArrayList<Integer>> goal) { //contains a goal parameter for using in the countMisplaced function
 
 		if(curr.emptyI < puzzleDim - 1) {
 			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
@@ -292,7 +292,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		
 	}
 	
-	public static int countMisplaced(ArrayList<ArrayList<Integer>> goal, ArrayList<ArrayList<Integer>> curr) {
+	public static int countMisplaced(ArrayList<ArrayList<Integer>> goal, ArrayList<ArrayList<Integer>> curr) { //simple function that iterates through current state and increments number of misplaced tiles each time a tile is not in its goal position
 		int numMisplaced = 0;
 		for(int i = 0; i < puzzleDim; i++) {
 			for(int j = 0; j < puzzleDim; j++) {
@@ -351,7 +351,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		
 	}
 	
-	public static void MisplacedTileSearch(ArrayList<ArrayList<Integer>> goalState, HashMap<ArrayList<ArrayList<Integer>>, Integer> seenStates, PriorityQueue<State> next){ 
+	public static void MisplacedTileSearch(ArrayList<ArrayList<Integer>> goalState, HashMap<ArrayList<ArrayList<Integer>>, Integer> seenStates, PriorityQueue<State> next){ //works the same as Uniform but calls misplacedSearch instead
 		
 		boolean isSolvable = false;
 		int maxDepth = 0;
