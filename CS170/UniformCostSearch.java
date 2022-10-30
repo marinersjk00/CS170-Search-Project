@@ -7,20 +7,22 @@ class Main
 static Scanner in = new Scanner(System.in);
 //	System.out.print("Please enter puzzle dimension: \n Ex: '3' for 8-puzzle, '4' for 15-puzzle, '5' for 24-puzzle\n");
 static int puzzleDim = 3;
-/*static class State{
-  int[][] puzzle;
+static class State{
+  ArrayList<ArrayList<Integer>> puzzle;
+  int emptyI;
+  int emptyJ;
   int depth;
   
   
   
-  State(int[][] p, int d){
+  State(ArrayList<ArrayList<Integer>> p, int d){
         this.puzzle = p;
         this.depth = d;
         
         a:
         for(int i = 0; i < puzzleDim; i++){
                 for(int j = 0; j < puzzleDim; j++){
-                        if(puzzle[i][j] == 0){
+                        if(this.puzzle.get(i).get(j) == 0){
                                 this.emptyI = i;
                                 this.emptyJ = j;
                                 break a;
@@ -31,16 +33,19 @@ static int puzzleDim = 3;
   
   
 
-}*/
+}
 
 
 
 
 	
-	static int[][] swap(int[][] arr, int a, int b, int ai, int aj, int bi, int bj){
-		int temp = a;
-		arr[ai][aj] = b;
-		arr[bi][bj] = temp;
+	static ArrayList<ArrayList<Integer>> swap(ArrayList<ArrayList<Integer>> arr, int a, int b, int ai, int aj, int bi, int bj){
+		
+		
+		arr.get(ai).set(aj, b);
+		arr.get(bi).set(bj, a);
+		
+		
 	
 		
 		return arr;
@@ -48,10 +53,10 @@ static int puzzleDim = 3;
 		
 	}
 
-	static boolean isGoal(int[][] puzzle, int[][] goal){
+	/*static boolean isGoal(ArrayList<ArrayList<Integer>> puzzle, ArrayList<ArrayList<Integer>> goal){
 		for(int i = 0; i < puzzleDim; i++){
 			for(int j = 0; j < puzzleDim; j++){
-				if(puzzle[i][j] != goal[i][j]) return false;
+				if(puzzle.get(i).get(j) != goal.get(i).get(j)) return false;
 			}
 		}
 		
@@ -59,7 +64,13 @@ static int puzzleDim = 3;
 	}
 	
 	
-
+	static void search(State curr, HashMap<ArrayList<ArrayList<Integer>>, Integer> seen) {
+		
+		if(curr.emptyI < puzzleDim - 1) {
+			State nextState = new State()
+		}
+		
+	}*/
 	public static void main(String[] args) {
 		ArrayList<ArrayList<Integer>>  puzzle = new ArrayList<ArrayList<Integer>>() ;
 		
@@ -90,6 +101,7 @@ static int puzzleDim = 3;
 		
 		
 		HashMap<ArrayList<ArrayList<Integer>>, Integer> seen = new HashMap<>();	
+		Queue<ArrayList<ArrayList<Integer>>> next = new LinkedList<>();
 		
 		System.out.print("Please enter the puzzle start from L to R, Top to Bottom. Enter '0' to represent the empty space\n\n");
 	for(int i = 0; i < puzzleDim; i++){
@@ -109,10 +121,18 @@ static int puzzleDim = 3;
 		System.out.println();
 	}
 				
+	puzzle = swap(puzzle, puzzle.get(0).get(0), puzzle.get(0).get(1), 0, 0, 0, 1);
+	
 
 
-
-
+	System.out.println("\n\nSwapped puzzle: ");
+	for(int i = 0; i < puzzleDim; i++){
+		for(int j = 0; j < puzzleDim; j++){
+			System.out.print(puzzle.get(i).get(j) + "  ");
+		}
+		System.out.println();
+	}
+System.out.println("\n\n");
 		for(int i = 0; i < puzzleDim; i++){
 			for(int j = 0; j < puzzleDim; j++){
 				System.out.print(puzzle.get(i).get(j) + "  ");
@@ -120,6 +140,7 @@ static int puzzleDim = 3;
 				System.out.println();
 
 	}
+		
 
 
 
