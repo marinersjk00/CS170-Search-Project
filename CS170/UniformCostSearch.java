@@ -7,13 +7,15 @@ import java.time.*;
 class Main
 {
 static Scanner in = new Scanner(System.in);
-static int puzzleDim = 3; //This is the only value we have to change to adjust for a different size of puzzle
+static int puzzleDim = 4; //This is the only value we have to change to adjust for a different size of puzzle
 static class State{
   ArrayList<ArrayList<Integer>> puzzle;
   int emptyI;
   int emptyJ;
   int depth;
   int numMisplaced;
+  int manhattan;
+  
   
   
   State(ArrayList<ArrayList<Integer>> p, int d){ //We have to find the empty space for the initial state
@@ -32,10 +34,13 @@ static class State{
         }
   }
   
-  State(ArrayList<ArrayList<Integer>> p, int d, int mis){ //We have to find the empty space for the initial state
+  State(ArrayList<ArrayList<Integer>> p, int d, int mis, int man, int aa, int b, int c, int dd){ //We have to find the empty space for the initial state. Useless variables aa, b, c, dd added to avoid constructor conflict
       this.puzzle = p;
       this.depth = d;
       this.numMisplaced = mis;
+      this.manhattan = man;
+      aa = b;
+      c = dd;
       
       a:
       for(int i = 0; i < puzzleDim; i++){
@@ -49,18 +54,29 @@ static class State{
       }
 }
   
-  State(ArrayList<ArrayList<Integer>> p, int d, int i, int j){ //for subsequent states we can define the empty space as a function of the previous state
+  State(ArrayList<ArrayList<Integer>> p, int d, int i, int j){ //for use in UniformSearch
       this.puzzle = p;
       this.depth = d;
       this.emptyI = i;
       this.emptyJ = j;
 }
   
-  State(ArrayList<ArrayList<Integer>> p, int d, int i, int j, int mis){ //for subsequent states we can define the empty space as a function of the previous state
+  State(ArrayList<ArrayList<Integer>> p, int d, int i, int j, int mis){ //for use in MisplacedSearch
       this.puzzle = p;
       this.depth = d;
       this.emptyI = i;
       this.emptyJ = j;
+      this.numMisplaced = mis;
+}
+  
+  
+  
+  State(ArrayList<ArrayList<Integer>> p, int d, int i, int j,  int mis, int man){ //for use in ManhattanSearch
+      this.puzzle = p;
+      this.depth = d;
+      this.emptyI = i;
+      this.emptyJ = j;
+      this.manhattan = man;
       this.numMisplaced = mis;
 }
   
@@ -87,6 +103,18 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		if((s.depth + s.numMisplaced) < (p.depth + p.numMisplaced)) {
 			return -1;
 		}else if((s.depth + s.numMisplaced) > (p.depth + p.numMisplaced)) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+}
+
+static class StateCompareManhattan implements Comparator<State>{ //Comparator for priority queue. Prioritizes min(depth + numMisplaced)
+	public int compare(State s, State p) {
+		if((s.depth + s.manhattan) < (p.depth + p.manhattan)) {
+			return -1;
+		}else if((s.depth + s.manhattan) > (p.depth + p.manhattan)) {
 			return 1;
 		}else {
 			return 0;
@@ -262,7 +290,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 				}
 			}
 			swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI).get(curr.emptyJ + 1), curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ + 1);
-			State nextState = new State(temp, curr.depth + 1, curr.emptyI, curr.emptyJ + 1);
+			State nextState = new State(temp, curr.depth + 1, curr.emptyI, curr.emptyJ + 1, countMisplaced(goal, temp));
 			if(!seen.containsKey(nextState.puzzle)) {
 				seen.put(nextState.puzzle, nextState.depth);
 
@@ -291,7 +319,81 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		}
 		
 	}
-	
+	static void manhattanSeek(State curr, HashMap<ArrayList<ArrayList<Integer>>, Integer> seen, Queue<State> next, ArrayList<ArrayList<Integer>> goal) {
+		if(curr.emptyI < puzzleDim - 1) {
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) { //creating a copy of the current state to enter in the swap function so as not to corrupt current state
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}
+			swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI + 1).get(curr.emptyJ), curr.emptyI, curr.emptyJ, curr.emptyI + 1, curr.emptyJ);
+			State nextState = new State(temp, curr.depth + 1, curr.emptyI + 1, curr.emptyJ, -1, countManhattan(goal, temp));
+			if(!seen.containsKey(nextState.puzzle)) { //if the nextState stored as a key in the hashmap then this is a repeated state and we can stop traversing this branch of the tree
+				seen.put(nextState.puzzle, nextState.depth);//if it is a new state then  hash it and queue it
+				next.add(nextState);
+				
+			}
+		}
+		
+		if(curr.emptyI > 0) {
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) {
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}			
+			swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI - 1).get(curr.emptyJ), curr.emptyI, curr.emptyJ, curr.emptyI - 1, curr.emptyJ);
+			State nextState = new State(temp, curr.depth + 1, curr.emptyI - 1, curr.emptyJ, -1, countManhattan(goal, temp));
+			if(!seen.containsKey(nextState.puzzle)) {
+				seen.put(nextState.puzzle, nextState.depth);
+
+				next.add(nextState);
+			}
+		}
+		
+		if(curr.emptyJ < puzzleDim - 1) {
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) {
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}
+			swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI).get(curr.emptyJ + 1), curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ + 1);
+			State nextState = new State(temp, curr.depth + 1, curr.emptyI, curr.emptyJ + 1, -1, countManhattan(goal, temp));
+			if(!seen.containsKey(nextState.puzzle)) {
+				seen.put(nextState.puzzle, nextState.depth);
+
+				next.add(nextState);
+				
+			}
+		}
+		
+		if(curr.emptyJ > 0) {
+			ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < puzzleDim; i++) {
+				ArrayList<Integer> t = new ArrayList<>();
+				temp.add(t);
+				for(int j = 0; j < puzzleDim; j++) {
+					t.add(curr.puzzle.get(i).get(j));
+				}
+			}
+			swap(temp, temp.get(curr.emptyI).get(curr.emptyJ), temp.get(curr.emptyI).get(curr.emptyJ - 1), curr.emptyI, curr.emptyJ, curr.emptyI, curr.emptyJ - 1);
+			State nextState = new State(temp, curr.depth + 1, curr.emptyI, curr.emptyJ - 1, -1, countManhattan(goal, temp));
+			if(!seen.containsKey(nextState.puzzle)) {
+				seen.put(nextState.puzzle, nextState.depth);
+
+				next.add(nextState);
+				
+			}
+		}
+	}
 	public static int countMisplaced(ArrayList<ArrayList<Integer>> goal, ArrayList<ArrayList<Integer>> curr) { //simple function that iterates through current state and increments number of misplaced tiles each time a tile is not in its goal position
 		int numMisplaced = 0;
 		for(int i = 0; i < puzzleDim; i++) {
@@ -436,13 +538,55 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000);
 	}
 	
+	public static void ManhattanSearch(ArrayList<ArrayList<Integer>> goalState, HashMap<ArrayList<ArrayList<Integer>>, Integer> seenStates, PriorityQueue<State> next) {
+		boolean isSolvable = false;
+		int maxDepth = 0;
+		State finished = null;
+		int numExpansions = 0; //each while loop iteration is an expanded node
+		//loop displays each state and current depth on each iteration
+		Instant insta = Instant.now();
+		long startTime = insta.toEpochMilli();
+		State start = next.peek();
+		
+		while(!next.isEmpty() && !isSolvable) { //loops until queue is empty (unsolvable) or goal state is achieved (solvable)
+			State curr = next.remove();
+			maxDepth = Math.max(maxDepth,  curr.depth);
+			System.out.print("Depth: " + curr.depth + "\n");
+			System.out.print("\nExpanding State with lowest heuristic:\n\n");
+			for(int i = 0; i < puzzleDim; i++) {
+				for(int j = 0; j < puzzleDim; j++) {
+					System.out.print(curr.puzzle.get(i).get(j) + "  " );
+				}
+				System.out.println();
+			}
+			isSolvable = isGoal(curr.puzzle, goalState);
+			if(isSolvable) finished = curr;
+			manhattanSeek(curr, seenStates, next, goalState);	
+			numExpansions++;
+		}
+		insta = Instant.now();
+		long endTime = insta.toEpochMilli();
+		if(isSolvable) { //if we can solve the puzzle we will print some stats for it
+			
+			
+			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + " sec\nNumber of Nodes Expanded = " + numExpansions + "\n");
+			System.out.println("Starting puzzle: ");
+			for(int i = 0; i < puzzleDim; i++){ //printing the initial state as additional info
+				for(int j = 0; j < puzzleDim; j++){
+					System.out.print(start.puzzle.get(i).get(j) + "  ");
+				}
+				System.out.println();
+			}
+		
+		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000);
+	}
+	
 	public static void main(String[] args) {
 		PriorityQueue<State> next = null;
 		ArrayList<ArrayList<Integer>>  solved = new ArrayList<ArrayList<Integer>>() ; //this is the goal state
 		HashMap<ArrayList<ArrayList<Integer>>, Integer> seen = new HashMap<>();	//this will contain previously seen states
 		int input = -1;
 		int desiredSearch = -1;
-		int numExpansions = 0;
 		System.out.println("Welcome to Jordan Kuschner's 8-puzzle solver for Professor Keogh's CS170 in Fall 2022");
 		System.out.println("Desired Goal State: \n");
 		int goalNum = 1; //used to build the goal state for any size puzzle
@@ -468,12 +612,16 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		
 		}
 
-		System.out.print("\nSelect a search algorithm. Enter 1 for Uniform Cost Search, 2 for Misplaced Tile Search.\n");
+		System.out.print("\nSelect a search algorithm. Enter 1 for Uniform Cost Search, 2 for Misplaced Tile Search, or 3 for Manhattan Search.\n");
 		desiredSearch = in.nextInt();
+		
+		//sets the right Comparator for the Priority Queue
 		if(desiredSearch == 1) {
 			next = new PriorityQueue<State>(new StateCompareDepth());
 		}else if(desiredSearch == 2) {
 			next = new PriorityQueue<State>(new StateCompareMisplace());
+		}else if(desiredSearch == 3) {
+			next = new PriorityQueue<State>(new StateCompareManhattan());
 		}
 		
 		
@@ -482,7 +630,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		
 		if(input == 2) {
 			
-			System.out.print("You selected the default input option.\n Enter a difficulty level from 1-5 with 1 being trivial and 5 being 'Oh Boy' difficulty \n");
+			System.out.print("You selected the default input option.\n Enter a difficulty level from 1-5 with 1 being 'Trivial' and 5 being 'Oh Boy' difficulty \n");
 			input = in.nextInt();
 			if(input == 1) {
 				System.out.print("You selected Trivial difficulty");
@@ -493,7 +641,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 		trivial.add(temp1);
 		trivial.add(temp2);
 		trivial.add(temp3);
-		State start = new State(trivial, 0, 2, 2, countMisplaced(solved, trivial));
+		State start = new State(trivial, 0, 2, 2, countMisplaced(solved, trivial), countManhattan(solved, trivial));
 		next.add(start);
 			}else if(input == 2) {
 				System.out.print("You selected Very Easy difficulty\n");
@@ -504,7 +652,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 				veryEasy.add(temp1);
 				veryEasy.add(temp2);
 				veryEasy.add(temp3);
-				State start = new State(veryEasy, 0, 2, 1,countMisplaced(solved, veryEasy));
+				State start = new State(veryEasy, 0, 2, 1,countMisplaced(solved, veryEasy), countManhattan(solved, veryEasy));
 				next.add(start);
 			}else if(input == 3) {
 				System.out.print("You selected Easy difficulty\n");
@@ -515,7 +663,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 				easy.add(temp1);
 				easy.add(temp2);
 				easy.add(temp3);
-				State start = new State(easy, 0, 0, 2, countMisplaced(solved, easy));
+				State start = new State(easy, 0, 0, 2, countMisplaced(solved, easy), countManhattan(solved, easy));
 				next.add(start);
 			}else if(input == 4) {
 				System.out.print("You selected Doable difficulty\n");
@@ -526,7 +674,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 				doable.add(temp1);
 				doable.add(temp2);
 				doable.add(temp3);
-				State start = new State(doable, 0, 0, countMisplaced(solved, doable));
+				State start = new State(doable, 0, 0, countMisplaced(solved, doable), countManhattan(solved, doable));
 				next.add(start);
 			}else if(input == 5) {
 				System.out.print("You selected Oh Boy difficulty\n");
@@ -537,7 +685,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 				ohBoy.add(temp1);
 				ohBoy.add(temp2);
 				ohBoy.add(temp3);
-				State start = new State(ohBoy, 0, 1, 1, countMisplaced(solved, ohBoy));
+				State start = new State(ohBoy, 0, 1, 1, countMisplaced(solved, ohBoy), countManhattan(solved, ohBoy));
 				next.add(start);
 			}
 		}else if(input == 1) {
@@ -552,7 +700,7 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 				}
 				
 			}
-			State start = new State(puzzle, 0, countMisplaced(solved, puzzle));
+			State start = new State(puzzle, 0, countMisplaced(solved, puzzle), countManhattan(solved, puzzle), 0, 0, 0, 0);
 			next.add(start);
 		}
 		
@@ -569,6 +717,8 @@ static class StateCompareMisplace implements Comparator<State>{ //Comparator for
 			UniformCostSearch(solved, seen, next);
 		}else if(desiredSearch == 2) {
 			MisplacedTileSearch(solved, seen, next);
+		}else if(desiredSearch == 3) {
+			ManhattanSearch(solved, seen, next);
 		}
 		
 		
