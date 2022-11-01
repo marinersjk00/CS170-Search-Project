@@ -458,12 +458,14 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 		Instant insta = Instant.now();
 		long startTime = insta.toEpochMilli();
 		State start = next.peek();
+		int maxQueue = 0;
 		
 		while(!next.isEmpty() && !isSolvable) { //loops until queue is empty (unsolvable) or goal state is achieved (solvable)
+			maxQueue = Math.max(maxQueue, next.size());
 			State curr = next.remove();
 			maxDepth = Math.max(maxDepth,  curr.depth);
-			System.out.print("Depth: " + curr.depth + "\n");
-			System.out.print("\nExpanding State with lowest depth:\n\n");
+			
+			System.out.print("\nExpanding State with g(n) =  " + curr.depth + " and h(n) = 0\n\n");
 			for(int i = 0; i < puzzleDim; i++) {
 				for(int j = 0; j < puzzleDim; j++) {
 					System.out.print(curr.puzzle.get(i).get(j) + "  " );
@@ -480,7 +482,8 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 		if(isSolvable) { //if we can solve the puzzle we will print some stats for it
 			
 			
-			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + " sec\nNumber of Nodes Expanded = " + numExpansions + "\n");
+			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + " sec\nNumber of Nodes Expanded = " + numExpansions + "\nMax"
+					+ " Queue Size: " + maxQueue + "\n\n");
 			System.out.println("Starting puzzle: ");
 			for(int i = 0; i < puzzleDim; i++){ //printing the initial state as additional info
 				for(int j = 0; j < puzzleDim; j++){
@@ -489,7 +492,7 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 				System.out.println();
 			}
 		
-		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000);
+		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + "\nMax Queue Size: " + maxQueue);
 		
 		
 	}
@@ -504,12 +507,14 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 		Instant insta = Instant.now();
 		long startTime = insta.toEpochMilli();
 		State start = next.peek();
+		int maxQueue = 0;
 		
 		while(!next.isEmpty() && !isSolvable) { //loops until queue is empty (unsolvable) or goal state is achieved (solvable)
+			maxQueue = Math.max(maxDepth, next.size());
 			State curr = next.remove();
 			maxDepth = Math.max(maxDepth,  curr.depth);
 			System.out.print("Depth: " + curr.depth + "\n");
-			System.out.print("\nExpanding State with lowest heuristic:\n\n");
+			System.out.print("\nExpanding State with g(n) = " + curr.depth + " and h(n) = " + curr.numMisplaced +"\n\n");
 			for(int i = 0; i < puzzleDim; i++) {
 				for(int j = 0; j < puzzleDim; j++) {
 					System.out.print(curr.puzzle.get(i).get(j) + "  " );
@@ -526,7 +531,9 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 		if(isSolvable) { //if we can solve the puzzle we will print some stats for it
 			
 			
-			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + " sec\nNumber of Nodes Expanded = " + numExpansions + "\n");
+
+			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + " sec\nNumber of Nodes Expanded = " + numExpansions + "\nMax"
+					+ " Queue Size: " + maxQueue + "\n\n");
 			System.out.println("Starting puzzle: ");
 			for(int i = 0; i < puzzleDim; i++){ //printing the initial state as additional info
 				for(int j = 0; j < puzzleDim; j++){
@@ -535,7 +542,7 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 				System.out.println();
 			}
 		
-		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000);
+		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + "\nMax Queue Size: " + maxQueue);
 	}
 	
 	public static void ManhattanSearch(ArrayList<ArrayList<Integer>> goalState, HashMap<ArrayList<ArrayList<Integer>>, Integer> seenStates, PriorityQueue<State> next) {
@@ -547,12 +554,14 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 		Instant insta = Instant.now();
 		long startTime = insta.toEpochMilli();
 		State start = next.peek();
+		int maxQueue = 0;
 		
 		while(!next.isEmpty() && !isSolvable) { //loops until queue is empty (unsolvable) or goal state is achieved (solvable)
+			maxQueue = Math.max(maxQueue,  next.size());
 			State curr = next.remove();
 			maxDepth = Math.max(maxDepth,  curr.depth);
 			System.out.print("Depth: " + curr.depth + "\n");
-			System.out.print("\nExpanding State with lowest heuristic:\n\n");
+			System.out.print("\nExpanding State with g(n) = " + curr.depth + " and h(n) = " + curr.manhattan + "\n\n");
 			for(int i = 0; i < puzzleDim; i++) {
 				for(int j = 0; j < puzzleDim; j++) {
 					System.out.print(curr.puzzle.get(i).get(j) + "  " );
@@ -568,8 +577,9 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 		long endTime = insta.toEpochMilli();
 		if(isSolvable) { //if we can solve the puzzle we will print some stats for it
 			
-			
-			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + " sec\nNumber of Nodes Expanded = " + numExpansions + "\n");
+
+			System.out.print("\nSolved!\nDepth of Solution: " + finished.depth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + " sec\nNumber of Nodes Expanded = " + numExpansions + "\nMax"
+					+ " Queue Size: " + maxQueue + "\n\n");
 			System.out.println("Starting puzzle: ");
 			for(int i = 0; i < puzzleDim; i++){ //printing the initial state as additional info
 				for(int j = 0; j < puzzleDim; j++){
@@ -578,7 +588,7 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 				System.out.println();
 			}
 		
-		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000);
+		}else System.out.print("\nNo solution for given input.\nMax Depth Reached: " + maxDepth + "\nTime Elapsed ≈ " + (double)(endTime - startTime)/1000 + "\nMax Queue Size: " + maxQueue);
 	}
 	
 	public static void main(String[] args) {
@@ -674,7 +684,7 @@ static class StateCompareManhattan implements Comparator<State>{ //Comparator fo
 				doable.add(temp1);
 				doable.add(temp2);
 				doable.add(temp3);
-				State start = new State(doable, 0, 0, countMisplaced(solved, doable), countManhattan(solved, doable));
+				State start = new State(doable, 0, 0, 0, countMisplaced(solved, doable), countManhattan(solved, doable));
 				next.add(start);
 			}else if(input == 5) {
 				System.out.print("You selected Oh Boy difficulty\n");
